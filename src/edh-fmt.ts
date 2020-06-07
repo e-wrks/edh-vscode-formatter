@@ -72,10 +72,7 @@ export function formatEdhLines(
       } else {
         // decrease 1 level (2 spaces) of indent
         nextIndent = nextIndent.substring(2)
-        if (!lineResult) {
-          // closing bracket is leading the line, unindent from this line on
-          currIndent = nextIndent
-        }
+        currIndent = nextIndent
       }
     }
 
