@@ -2,7 +2,12 @@
 import { TextDocument, Range, TextEdit, ProviderResult } from 'vscode'
 
 
+// TODO support more Unicode ranges as valid identifier chars
+const identStartChars = /[_a-zA-Z]/
+const identChars = /[_a-zA-Z0-9']/
+
 const opChars = "=~!@#$%^&|:<>?+-*/";
+
 
 export function formatEdhLines(
   document: TextDocument, range: Range,
@@ -144,12 +149,27 @@ export function formatEdhLines(
               lineResult += ' ' // insert a single space if not a blank line
             }
             let cutOffIdx = seq.length
+            let inIdent = false
             for (let i = 0; i < cutOffIdx; i++) {
               const c = seq[i]
+              if (inIdent) {
+                if (!identChars.test(c)) {
+                  inIdent = false
+                }
+              } else if (identStartChars.test(c)) {
+                inIdent = true
+              }
               switch (c) {
                 // start of string
-                case '"':
                 case "'":
+                  if (inIdent) {
+                    // special treatment for the single quote possibly appears 
+                    // within an identifier - it's part of the identifier, not
+                    // a string start
+                    lineResult += c
+                    break
+                  }
+                case '"':
                 case '`':
                   cutOffIdx = i
                   break
