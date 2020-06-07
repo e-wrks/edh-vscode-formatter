@@ -14,6 +14,7 @@ This extension provides the official code formatter for
   - [Line Length](#line-length)
   - [Margin between keywords/identifiers and operators](#margin-between-keywordsidentifiers-and-operators)
   - [Margin before an opening bracket](#margin-before-an-opening-bracket)
+  - [No more than 2 Blank Lines](#no-more-than-2-blank-lines)
 
 The official formatter is **no-config**, **uncomprised** in some principles,
 while **adapting** to the rest of your code style.
@@ -65,7 +66,7 @@ Don't ask anywhere.
   - Empty Content: **0**
   - With Content: **exactly 1 at each side**
 
-  > `<>` Angle brackets do not exist in **Edh**,
+  > Angle brackets `<>` do not exist in **Edh**,
   > they appear as or in operators though
 
 - Outside a pair of brackets:
@@ -97,3 +98,10 @@ Don't ask anywhere.
 > must **1** space if immediately following another closing bracket
 
 > Otherwise, it's up to you to decide whether to put **1** space there
+
+### No more than 2 Blank Lines
+
+You can put blank lines anywhere so long as no more than **2** adjacent ones
+of them
+
+Um, plus it has to be **1** and only **1** at EoF
