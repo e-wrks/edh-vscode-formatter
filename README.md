@@ -6,7 +6,14 @@ This extension provides the official code formatter for
 - [Format on Save - by default](#format-on-save---by-default)
 - [No Configuration](#no-configuration)
 - [Enforced Principles](#enforced-principles)
+  - [Indent](#indent)
+  - [Trailing Spaces](#trailing-spaces)
+  - [Number of Blank Lines](#number-of-blank-lines)
+  - [Margin Space](#margin-space)
 - [Styles Up to You](#styles-up-to-you)
+  - [Line Length](#line-length)
+  - [Margin between keywords/identifiers and operators](#margin-between-keywordsidentifiers-and-operators)
+  - [Margin before an opening bracket](#margin-before-an-opening-bracket)
 
 The official formatter is **no-config**, **uncomprised** in some principles,
 while **adapting** to the rest of your code style.
@@ -28,62 +35,65 @@ Don't ask anywhere.
 
 ## Enforced Principles
 
-- Indent:
+### Indent
 
-  > According to only brackets (`{}`/`[]`/`()`)
+> According to only brackets (`{}`/`[]`/`()`)
 
-  - Size: **2 spaces**
+- Size: **2 spaces**
 
-- Trailing Space: **Never**
+### Trailing Spaces
 
-  > Even in comments and, non-term lines of multi-line strings
+- **Never**
 
-- Number of Blank Lines:
+> Even in comments and, non-last lines of multi-line strings
 
-  - At End-Of-File: **exactly 1**
-  - Everywhere else: **0 ~ 2**
+### Number of Blank Lines
 
-    > Even in comments and multi-line strings
+- At End-Of-File: **exactly 1**
+- Everywhere else: **0 ~ 2**
 
-- Margin Space:
+  > Even in comments and multi-line strings
 
-  - Between expressions / statements : **exactly 1**
+### Margin Space
 
-    > After the `,` and `;` if present
+- Between expressions / statements : **exactly 1**
 
-  - Inside a pair of brackets (`{}`/`[]`/`()`):
+  > After the `,` and `;` if present
 
-    - Empty Content: 0
-    - Non-Empty Content: **exactly 1 at each side**
+- Inside a pair of brackets (`{}`/`[]`/`()`):
 
-    > `<>` Angle brackets do not exist in **Edh**,
-    > they appear as or in operators though
+  - Empty Content: **0**
+  - With Content: **exactly 1 at each side**
 
-  - Outside a pair of brackets:
+  > `<>` Angle brackets do not exist in **Edh**,
+  > they appear as or in operators though
 
-    - Left side: **0 ~ 1**
-    - Right side as End-of-Line: **0**
-    - Right side followed by stuff: **1**
+- Outside a pair of brackets:
 
-    > Same for both single line and multi-line cases
+  - Left side: **0 ~ 1**
+    > see [Margin before an opening bracket](#margin-before-an-opening-bracket)
+  - Right side as End-of-Line: **0**
+  - Right side followed by stuff: **1**
 
-  - Outside a string literal: **1**
+  > Same for both single line and multi-line cases
+
+- Outside a string literal: **1**
 
 ## Styles Up to You
 
-- Line Length
+### Line Length
 
-  > You decide how long each line should run, that means you decide whether to
-  > split a long line, or merge several short lines
+> You decide how long each line should run, that means you decide whether to
+> split a long line, or merge several short lines
 
-- Margin between keywords/identifiers and operators
+### Margin between keywords/identifiers and operators
 
-  > It just can't be more than **1** space, you decide that space to be present
-  > or not
+> It just can't be more than **1** space, you decide that space to be present
+> or not
 
-- Margin before an opening bracket
+### Margin before an opening bracket
 
-  > It's enforced **no space** before an opening bracket at Start-of-Line, and
-  > must **1** space if immediately following another closing bracket
+> It's enforced **no space** before an opening bracket at Start-of-Line, and
+> must **1** space if immediately following another closing bracket
 
-  > Otherwise, it's up to you to decide whether to put **1** space there
+> Otherwise, it's up to you to decide whether to put **1** space there
