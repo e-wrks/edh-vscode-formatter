@@ -46,18 +46,27 @@ Don't ask anywhere.
     > Even in comments and multi-line strings
 
 - Margin Space:
+
   - Between expressions / statements : **exactly 1**
+
     > After the `,` and `;` if present
+
   - Inside a pair of brackets (`{}`/`[]`/`()`):
+
     - Empty Content: 0
     - Non-Empty Content: **exactly 1 at each side**
-      > `<>` Angle brackets do not exist in **Edh**,
-      > they appear as or in operators though
+
+    > `<>` Angle brackets do not exist in **Edh**,
+    > they appear as or in operators though
+
   - Outside a pair of brackets:
+
     - Left side: **0 ~ 1**
     - Right side as End-of-Line: **0**
     - Right side followed by stuff: **1**
-      > Same for both single line and multi-line cases
+
+    > Same for both single line and multi-line cases
+
   - Outside a string literal: **1**
 
 ## Styles Up to You
