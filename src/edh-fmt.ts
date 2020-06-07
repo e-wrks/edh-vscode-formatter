@@ -1,6 +1,9 @@
 
 import { TextDocument, Range, TextEdit, ProviderResult } from 'vscode'
 
+
+const opChars = "=~!@#$%^&|:<>?+-*/";
+
 export function formatEdhLines(
   document: TextDocument, range: Range,
 ): ProviderResult<TextEdit[]> {
@@ -163,14 +166,22 @@ export function formatEdhLines(
                   bracketStack.push(c)
                   nextIndent += '  ' // increase 1 level (2 spaces) of indent
                   lineResult += c
-                  cutOffIdx = i + 1 // start of new expr/stmt, break the
+                  for (i++; i < cutOffIdx; i++) {
+                    const c1 = seq[i]
+                    if (opChars.indexOf(c1) < 0) { break }
+                    lineResult += c1
+                  }
+                  cutOffIdx = i // start of new expr/stmt, break the
                   // sequence, so as to insert a following space
                   break
                 case '}':
                   popBracket('{')
                   lineResult = lineResult.trimRight()
-                  if (lineResult.length > 0 && !lineResult.endsWith('{')) {
-                    lineResult += ' '
+                  if (lineResult.length > 0) {
+                    const c1 = lineResult[lineResult.length - 1]
+                    if ('{' !== c1 && opChars.indexOf(c1) < 0) {
+                      lineResult += ' '
+                    }
                   }
                   lineResult += c
                   cutOffIdx = i + 1 // start of new expr/stmt, break the
@@ -179,8 +190,11 @@ export function formatEdhLines(
                 case ']':
                   popBracket('[')
                   lineResult = lineResult.trimRight()
-                  if (lineResult.length > 0 && !lineResult.endsWith('[')) {
-                    lineResult += ' '
+                  if (lineResult.length > 0) {
+                    const c1 = lineResult[lineResult.length - 1]
+                    if ('[' !== c1 && opChars.indexOf(c1) < 0) {
+                      lineResult += ' '
+                    }
                   }
                   lineResult += c
                   cutOffIdx = i + 1 // start of new expr/stmt, break the
@@ -189,8 +203,11 @@ export function formatEdhLines(
                 case ')':
                   popBracket('(')
                   lineResult = lineResult.trimRight()
-                  if (lineResult.length > 0 && !lineResult.endsWith('(')) {
-                    lineResult += ' '
+                  if (lineResult.length > 0) {
+                    const c1 = lineResult[lineResult.length - 1]
+                    if ('(' !== c1 && opChars.indexOf(c1) < 0) {
+                      lineResult += ' '
+                    }
                   }
                   lineResult += c
                   cutOffIdx = i + 1 // start of new expr/stmt, break the
