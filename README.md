@@ -6,17 +6,19 @@ This extension provides the official code formatter for
 - [Format on Save - by default](#format-on-save---by-default)
 - [No Configuration](#no-configuration)
 - [Enforced Principles](#enforced-principles)
-  - [Indent](#indent)
-  - [Trailing Spaces](#trailing-spaces)
-  - [Max Number of Blank Lines](#max-number-of-blank-lines)
+  - [Indention](#indention)
+  - [Trailing Space](#trailing-space)
+  - [Adjacent Blank Lines](#adjacent-blank-lines)
   - [Margin Space](#margin-space)
 - [Styles Up to You](#styles-up-to-you)
   - [Line Length](#line-length)
   - [Semicolons](#semicolons)
-  - [Trailing Commas](#trailing-commas)
+  - [Commas](#commas)
+    - [Trailing Commas](#trailing-commas)
   - [String Quotes](#string-quotes)
-  - [Margin between keywords/identifiers and operators](#margin-between-keywordsidentifiers-and-operators)
-  - [Margin before an opening bracket](#margin-before-an-opening-bracket)
+  - [Margins](#margins)
+    - [between keywords/identifiers and operators](#between-keywordsidentifiers-and-operators)
+    - [before an opening bracket](#before-an-opening-bracket)
   - [Blank Lines](#blank-lines)
 
 The official formatter is **no-config**, **uncomprised** in some principles,
@@ -39,38 +41,148 @@ Don't ask anywhere.
 
 ## Enforced Principles
 
-### Indent
+### Indention
 
-> According to only brackets (`{}`/`[]`/`()`)
+- Size:
 
-- Size: **2 spaces**
+  **2 spaces**
 
-### Trailing Spaces
+- Placement
 
-- **Never**
+  Only with nesting of brackets (`{}`/`[]`/`()`).
 
-> Even in comments and, non-last lines of multi-line strings
+  That's to say, lines within nested brackets are always further indented,
+  each nesting level add exactly 2 spaces to the indention; and without an
+  enclosing bracket, a line is kept at same indention level of the line
+  above.
 
-### Max Number of Blank Lines
+For example:
 
-- At End-Of-File: **exactly 1**
-- Everywhere else: **0 ~ 2**
+```edh
+method abs( x )
+  if x < 0 then
+    return -x
+  else
+    return x
+```
+
+will be formatted to
+
+```edh
+method abs( x )
+if x < 0 then
+return -x
+else
+return x
+```
+
+It's not wrong semantically, but idiomatically you are adviced to write it
+like this:
+
+```edh
+method abs( x ) {
+  if x < 0
+  then return -x
+  else return x
+}
+```
+
+Or this:
+
+```edh
+method abs( x ) if x < 0 then -x else x
+```
+
+Or this:
+
+```edh
+method abs( x ) x < 0 &> ( -x ) |> x
+```
+
+While
+
+```edh
+for x from [ 3, 2, 5 ] do
+  for y from [ 7, 9, 10 ] do
+    yield x * y
+```
+
+will be formatted to:
+
+```edh
+for x from [ 3, 2, 5 ] do
+for y from [ 7, 9, 10 ] do
+yield x * y
+```
+
+which is actually idiomatic **Edh** style, and also:
+
+```edh
+
+generator long'long'arg'list (
+  a, b, c, d, e, f
+) {
+  for x from [ 3, 2, 5 ] do
+  for y from [ 7, 9, 10 ] do
+  yield pkargs( x, y )
+}
+
+for ( x, y )
+from long'long'arg'list( 1, 2, 3, 4, 5, 6 )
+do { use'x( x ) use'y( y ) }
+```
+
+### Trailing Space
+
+**Never** on a line
+
+> Even in comments and multi-line strings
+
+> For literal strings to have trailing spaces, write each such line separately,
+> concatenate them then, e.g.
+
+```edh
+str'with'trailing'spaces = `first line  \n`
+++ `middle lines
+without trailing space
+a line needs trailing space  \n`
+++ `rest lines
+without trailing space
+last line can have trailing spaces  `
+```
+
+### Adjacent Blank Lines
+
+- At End-Of-File:
+
+  **exactly 1**
+
+- Everywhere else:
+
+  **0 ~ 2**
 
   > Even in comments and multi-line strings
 
 ### Margin Space
 
-- Between expressions / statements : **exactly 1**
+- Between expressions/statements:
 
-  > After the comma (`,`) and semicolon (`;`) if present
+  **exactly 1**
+
+  > After the comma (`,`) / semicolon (`;`) if present
 
 - Inside a pair of brackets (`{}`/`[]`/`()`):
 
   > Note angle brackets `<>` do not exist in **Edh**, they appear as or in
   > operators though.
 
-  - Empty Content: **0**
-  - With Content: **exactly 1 at each side**
+  - Without Content:
+
+    **0**
+
+  - With Content:
+
+    **exactly 1 at each side**
 
   > Note **Edh** brackets are extensible by sticking operator chars to both or
   > either of the opening/closing tag, currently there is `{$ ... $}` for
@@ -90,7 +202,7 @@ Don't ask anywhere.
 - Outside a pair of brackets:
 
   - Left side: **0 ~ 1**
-    > see [Margin before an opening bracket](#margin-before-an-opening-bracket)
+    > see [before an opening bracket](#before-an-opening-bracket)
   - Right side as End-of-Line: **0**
   - Right side followed by stuff: **1**
 
@@ -174,11 +286,42 @@ not the first expression in its scope:
 > expression, to save some trouble when later someone else or yourself to
 > put more expressions/statements before it.
 
-### Trailing Commas
+### Commas
+
+It may be a little surprising, but commas can be omitted in **Edh**
+
+```bash
+Đ: type( (3 2 1) )
+TupleType
+Đ: type( [3 2 1] )
+ListType
+Đ: let (a b c) = (3 2 1)
+Đ: (a b c) == ( a, b, c, )
+true
+Đ: [a b c] ~= [ a, b, c, ]
+true
+Đ: (a b c)
+( 3, 2, 1, )
+Đ: console.print(a b c)
+3
+2
+1
+Đ: console.print( a, b, c, )
+3
+2
+1
+Đ:
+```
+
+The formatter wont' insert commas for you, and neither will remove them.
+
+> We'll figure out what a linter should say regarding commas in your code.
+
+#### Trailing Commas
 
 Trailing commas are permited by the language syntax to greatest extent, but
 it's up to you to write ones here and there, the formatter won't add or
-remove commas.
+remove commas anyway.
 
 ### String Quotes
 
@@ -190,7 +333,9 @@ The formatter won't queston your choice.
 
 > Neither should an **Edh** linter, for one to come sooner or later.
 
-### Margin between keywords/identifiers and operators
+### Margins
+
+#### between keywords/identifiers and operators
 
 It just can't be more than **1** space, you decide that 1 space to be present
 or not.
@@ -206,7 +351,7 @@ While excessive white spaces will be thrown away by the formatter.
 
 > Note **1** space before a string literal is always maintained as shown above.
 
-### Margin before an opening bracket
+#### before an opening bracket
 
 There're curly/square/round brackets in **Edh**, i.e. (`{}`/`[]`/`()`) .
 
