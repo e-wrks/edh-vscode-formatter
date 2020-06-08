@@ -118,7 +118,6 @@ yield x * y
 which is actually idiomatic **Edh** style, and also:
 
 ```edh
-
 generator long'long'arg'list (
   a, b, c, d, e, f
 ) {
@@ -185,14 +184,35 @@ last line can have trailing spaces  `
     **exactly 1 at each side**
 
   > Note **Edh** brackets are extensible by sticking operator chars to both or
-  > either of the opening/closing tag, currently there is `{$ ... $}` for
-  > expression iterpolation, and shall be more in the future.
+  > either of the opening/closing tag, currently there is
 
-  > The formatter will format `some'proc(**kwargs)` to `some'proc(** kwargs )`
+  ```edh
+  {$ ... $}
+  ```
+
+  > for expression iterpolation, and shall be more in the future.
+
+  > The formatter will format
+
+  ```edh
+  some'proc(**kwargs)
+  ```
+
+  > to
+
+  ```edh
+  some'proc(** kwargs )
+  ```
+
   > as it thinks there is a `(** )` bracket pair instead of `()`, this is less
   > ideal, though the interpreter will still work as expected so far, before
-  > some extended bracket e.g. `(* ... *)` get introduced by the language
-  > syntax.
+  > some extended bracket e.g.
+
+  ```edh
+  (* ... *)
+  ```
+
+  > get introduced by the language syntax.
 
   > You can write `some'proc( **kwargs)` so the formatter can understand it
   > mentally correct and format the code to `some'proc( **kwargs )` . And the
@@ -201,31 +221,43 @@ last line can have trailing spaces  `
 
 - Outside a pair of brackets:
 
-  - Left side: **0 ~ 1**
+  - Left side:
+
+    **0 ~ 1**
+
     > see [before an opening bracket](#before-an-opening-bracket)
-  - Right side as End-of-Line: **0**
-  - Right side followed by stuff: **1**
+
+  - Right side as End-of-Line:
+
+    **0**
+
+  - Right side followed by stuff:
+
+    **1**
 
   > Same for both single line and multi-line cases
 
-- Outside a string literal: **1**
+- Outside a string literal:
+
+  **1**
 
 ## Styles Up to You
 
 ### Line Length
 
-You decide how long each line should run, that means you decide whether to
-split a long line, or merge several short lines.
+You decide how long each line should run, that means whether to split a long
+line, or to join several short lines.
 
 ### Semicolons
 
 Unlike **JavaScript**, neither the formatter nor the interpreter of **Edh**
 will insert semicolons for you.
 
-In most places a semicolon is not needed, you just start writing the next
-expression or statement, while it's also harmless to write a semicolon as
-separator. But there're cases semicolons are necessary for disambiguation
-purpose.
+But like **ECMAScript 6**, in most places a semicolon is not necessary, you
+just start writing the next expression or statement, while it's also harmless
+to write a semicolon as separator.
+
+Well there're cases semicolons are necessary for disambiguation purpose.
 
 For example:
 
@@ -270,8 +302,10 @@ to get
 Đ:
 ```
 
-Rules of thumb: prefix a semicolon (`;`) to one of these expressions if it's
-not the first expression in its scope:
+Rules of thumb:
+
+> Prefix a semicolon (`;`) to one of these expressions if it's not the first
+> expression in its scope:
 
 - Tuple literal - to be disambiguated from procedure call
   > `; ( a, b, c )`
@@ -313,7 +347,7 @@ true
 Đ:
 ```
 
-The formatter wont' insert commas for you, and neither will remove them.
+The formatter wont' insert commas for you, and neither will remove any.
 
 > We'll figure out what a linter should say regarding commas in your code.
 
@@ -331,7 +365,7 @@ of them. All support multi-line contents.
 
 The formatter won't queston your choice.
 
-> Neither should an **Edh** linter, for one to come sooner or later.
+> Neither should an **Edh** linter do that, for one to come sooner or later.
 
 ### Margins
 
@@ -368,7 +402,7 @@ some'proc ()
 some'array[ i ]
 some'array [ i ]
 if errno<0 then{ rethrow }
-if errno<0 then { rethrow }
+if errno < 0 then { rethrow }
 ```
 
 ### Blank Lines
