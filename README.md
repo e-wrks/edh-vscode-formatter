@@ -308,13 +308,21 @@ Rules of thumb:
 > expression in its scope:
 
 - Tuple literal - to be disambiguated from procedure call
-  > `; ( a, b, c )`
+  ```edh
+  ; ( a, b, c )
+  ```
 - List literal - to be disambiguated from indexing
-  > `; [ a, b, c ]`
+  ```edh
+  ; [ a, b, c ]
+  ```
 - Negation - to be disambiguated from subtraction
-  > `; -inf -> ...`
+  ```edh
+  ; -inf -> ...
+  ```
 - Guard - to be disambiguated from binary infix operator `|`
-  > `; | null( l ) -> ...`
+  ```edh
+  ; | null( l ) -> ...
+  ```
 
 > Actually you'd prefer to always add that semicolon even if it's the first
 > expression, to save some trouble when later someone else or yourself to
@@ -376,10 +384,12 @@ or not.
 
 For example, all these forms will be kept intact:
 
-- `s = s ++ '.edh'`
-- `s =s ++ '.edh'`
-- `s= s ++ '.edh'`
-- `s=s++ '.edh'`
+```edh
+s = s ++ '.edh'
+s =s ++ '.edh'
+s= s ++ '.edh'
+s=s++ '.edh'
+```
 
 While excessive white spaces will be thrown away by the formatter.
 
@@ -396,7 +406,7 @@ Otherwise, typically in a procedure call expression, it's up to you to
 decide whether to put a space between the procedure name and the opening `(`.
 That's to say, all of the following will be kept intact:
 
-```
+```edh
 some'proc()
 some'proc ()
 some'array[ i ]
