@@ -6,7 +6,7 @@
 	"name": "edh-vscode-formatter",
 	"displayName": "Edh Code Formatter",
 	"description": "Code Formatter for Edh",
-	"version": "0.0.6",
+	"version": "0.0.7",
 	"engines": {
 		"vscode": "^1.20.0"
 	},
