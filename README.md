@@ -188,7 +188,7 @@ last line can have trailing spaces  `
   {$ ... $}
   ```
 
-  > for expression iterpolation, and shall be more in the future.
+  > for expression iterpolation, and there shall be more in the future.
 
   > The formatter will format
 
@@ -212,10 +212,25 @@ last line can have trailing spaces  `
 
   > get introduced by the language syntax.
 
-  > You can write `some'proc( **kwargs)` so the formatter can understand it
-  > mentally correct and format the code to `some'proc( **kwargs )` . And the
+  > You can write
+
+  ```edh
+  some'proc( **kwargs)
+  ```
+
+  > so the formatter can understand it
+  > mentally correct and format the code to
+
+  ```edh
+  some'proc( **kwargs )
+  ```
+
+  > . And the
   > formatter will accept spaces between `**` and `kwargs` too, i.e.
-  > `some'proc( ** kwargs )` .
+
+  ```edh
+  some'proc( ** kwargs )
+  ```
 
 - Outside a pair of brackets:
 
@@ -228,6 +243,8 @@ last line can have trailing spaces  `
   - Right side as End-of-Line:
 
     **0**
+
+    > as it is effectivelly [Trailing Space](#trailing-space)
 
   - Right side followed by stuff:
 
@@ -353,7 +370,7 @@ true
 Đ:
 ```
 
-The formatter wont' insert commas for you, and neither will remove any.
+The formatter wont' insert commas for you, and neither will it remove any.
 
 > We'll figure out what a linter should say regarding commas in your code.
 
@@ -401,8 +418,8 @@ It's enforced **no space** before an opening bracket at **Start-of-Line**, and
 must **1** space if immediately following another closing bracket.
 
 Otherwise, typically in a procedure call expression, it's up to you to
-decide whether to put a space between the procedure name and the opening `(`.
-That's to say, all of the following will be kept intact:
+decide whether to put a space between the procedure name and the opening
+round bracket. That's to say, all of the following will be kept intact:
 
 ```edh
 some'proc()
@@ -418,4 +435,4 @@ if errno < 0 then { rethrow }
 You can put blank lines anywhere so long as no more than **2** adjacent ones
 of them.
 
-Um, plus it has to be **1** and only **1** at EoF.
+Um, plus there has to be exactly **1** blank line at EoF.
