@@ -51,12 +51,10 @@ Don't ask anywhere.
 
   Only with nesting of brackets (`{}`/`[]`/`()`).
 
-  That's to say, lines within nested brackets are always further indented,
-  each nesting level add exactly 2 spaces to the indention; and without an
-  enclosing bracket, a line is kept at same indention level of the line
-  above.
-
-For example:
+That's to say, lines within nested brackets are always further indented,
+each nesting level add exactly 2 spaces to the indention; and without an
+enclosing bracket, a line is kept at same indention level of the line
+above. For example:
 
 ```edh
 method abs( x )
