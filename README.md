@@ -16,6 +16,7 @@ while **adapting** to the rest of your code style.
 - [Styles Up to You](#styles-up-to-you)
   - [Line Length](#line-length)
   - [Semicolons](#semicolons)
+    - [Rules of thumb](#rules-of-thumb)
   - [Commas](#commas)
     - [Trailing Commas](#trailing-commas)
   - [String Quotes](#string-quotes)
@@ -54,7 +55,9 @@ Don't ask anywhere.
 That's to say, lines within nested brackets are always further indented,
 each nesting level add exactly 2 spaces to the indention; and without an
 enclosing bracket, a line is kept at same indention level of the line
-above. For example:
+above.
+
+<details><summary>Examples</summary>
 
 ```edh
 method abs( x )
@@ -129,14 +132,18 @@ from long'long'arg'list( 1, 2, 3, 4, 5, 6 )
 do { use'x( x ) use'y( y ) }
 ```
 
+</details>
+
 ### Trailing Space
 
 **Never** on a line
 
 > Even in comments and multi-line strings
 
-> For literal strings to have trailing spaces, write each such line separately,
-> concatenate them then, e.g.
+<details><summary>While you can have it in strings</summary>
+
+For literal strings to have trailing spaces, write each such line separately,
+concatenate them then, e.g.
 
 ```edh
 str'with'trailing'spaces = `first line  \n`
@@ -147,6 +154,8 @@ a line needs trailing space  \n`
 without trailing space
 last line can have trailing spaces  `
 ```
+
+</details>
 
 ### Adjacent Blank Lines
 
@@ -179,58 +188,61 @@ last line can have trailing spaces  `
 
   - With Content:
 
-    **exactly 1 at each side**
+    **exactly 1 at each side** <details>
+    <summary>Note</summary>
 
-  > Note **Edh** brackets are extensible by sticking operator chars to both or
-  > either of the opening/closing tag, currently there is
+    **Edh** brackets are extensible by sticking operator chars to both or
+    either of the opening/closing tag, currently there is
 
-  ```edh
-  {$ ... $}
-  ```
+    ```edh
+    {$ ... $}
+    ```
 
-  > for expression iterpolation, and there shall be more in the future.
+    for expression iterpolation, and there shall be more in the future.
 
-  > The formatter will format
+    The formatter will format
 
-  ```edh
-  some'proc(**kwargs)
-  ```
+    ```edh
+    some'proc(**kwargs)
+    ```
 
-  > to
+    to
 
-  ```edh
-  some'proc(** kwargs )
-  ```
+    ```edh
+    some'proc(** kwargs )
+    ```
 
-  > as it thinks there is a `(** )` bracket pair instead of `()`, this is less
-  > ideal, though the interpreter will still work as expected so far, before
-  > some extended bracket e.g.
+    as it thinks there is a `(** )` bracket pair instead of `()`, this is less
+    ideal, though the interpreter will still work as expected so far, before
+    some extended bracket e.g.
 
-  ```edh
-  (* ... *)
-  ```
+    ```edh
+    (* ... *)
+    ```
 
-  > get introduced by the language syntax.
+    get introduced by the language syntax.
 
-  > You can write
+    You can write
 
-  ```edh
-  some'proc( **kwargs)
-  ```
+    ```edh
+    some'proc( **kwargs)
+    ```
 
-  > so the formatter can understand it
-  > mentally correct and format the code to
+    so the formatter can understand it
+    mentally correct and format the code to
 
-  ```edh
-  some'proc( **kwargs )
-  ```
+    ```edh
+    some'proc( **kwargs )
+    ```
 
-  > . And the
-  > formatter will accept spaces between `**` and `kwargs` too, i.e.
+    . And the
+    formatter will accept spaces between `**` and `kwargs` too, i.e.
 
-  ```edh
-  some'proc( ** kwargs )
-  ```
+    ```edh
+    some'proc( ** kwargs )
+    ```
+
+    </details>
 
 - Outside a pair of brackets:
 
@@ -274,7 +286,7 @@ to write a semicolon as separator.
 
 Well there're cases semicolons are necessary for disambiguation purpose.
 
-For example:
+<details><summary>Examples</summary>
 
 ```bash
 Đ: {
@@ -317,7 +329,9 @@ to get
 Đ:
 ```
 
-Rules of thumb:
+</details>
+
+#### Rules of thumb
 
 > Prefix a semicolon (`;`) to one of these expressions if it's not the first
 > expression in its scope:
@@ -347,6 +361,8 @@ Rules of thumb:
 
 It may be a little surprising, but commas can be omitted in **Edh**
 
+<details><summary>Example</summary>
+
 ```bash
 Đ: type( (3 2 1) )
 TupleType
@@ -369,6 +385,8 @@ true
 1
 Đ:
 ```
+
+</details>
 
 The formatter wont' insert commas for you, and neither will it remove any.
 
@@ -397,7 +415,9 @@ The formatter won't queston your choice.
 It just can't be more than **1** space, you decide that 1 space to be present
 or not.
 
-For example, all these forms will be kept intact:
+<details><summary>Example</summary>
+
+All these forms will be kept intact:
 
 ```edh
 s = s ++ '.edh'
@@ -410,16 +430,27 @@ While excessive white spaces will be thrown away by the formatter.
 
 > Note **1** space before a string literal is always maintained as shown above.
 
+</details>
+
 #### before an opening bracket
 
-There're curly/square/round brackets in **Edh**, i.e. (`{}`/`[]`/`()`) .
+<details><summary>Note</summary>
+
+There're curly/square/round brackets in **Edh**, i.e. (`{}`/`[]`/`()`)
+but no angle brackets (`<>`).
+
+</details>
 
 It's enforced **no space** before an opening bracket at **Start-of-Line**, and
 must **1** space if immediately following another closing bracket.
 
 Otherwise, typically in a procedure call expression, it's up to you to
 decide whether to put a space between the procedure name and the opening
-round bracket. That's to say, all of the following will be kept intact:
+round bracket.
+
+<details><summary>Example</summary>
+
+All of the following will be kept intact:
 
 ```edh
 some'proc()
@@ -429,6 +460,8 @@ some'array [ i ]
 if errno<0 then{ rethrow }
 if errno < 0 then { rethrow }
 ```
+
+</details>
 
 ### Blank Lines
 
