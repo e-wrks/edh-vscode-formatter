@@ -1,7 +1,10 @@
-# Official Code Formatter for Edh
+# Official Code Formatter for Đ (Edh)
 
 This extension provides the official code formatter for
-[Edh](https://github.com/e-wrks/edh)
+[Đ (Edh)](https://github.com/e-wrks/edh)
+
+The official formatter is **no-config**, **uncomprised** in some principles,
+while **adapting** to the rest of your code style.
 
 - [Format on Save - by default](#format-on-save---by-default)
 - [No Configuration](#no-configuration)
@@ -20,9 +23,6 @@ This extension provides the official code formatter for
     - [between keywords/identifiers and operators](#between-keywordsidentifiers-and-operators)
     - [before an opening bracket](#before-an-opening-bracket)
   - [Blank Lines](#blank-lines)
-
-The official formatter is **no-config**, **uncomprised** in some principles,
-while **adapting** to the rest of your code style.
 
 ## Format on Save - by default
 
