@@ -1,5 +1,6 @@
 {
 	"publisher": "ComplYue",
+	"license": "MIT",
 	"repository": {
 		"url": "https://github.com/e-wrks/edh-vscode-formatter"
 	},
