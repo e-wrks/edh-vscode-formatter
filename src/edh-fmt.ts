@@ -80,7 +80,10 @@ export function formatEdhLines(
       } else {
         // decrease 1 level (2 spaces) of indent
         nextIndent = nextIndent.substring(2)
-        currIndent = nextIndent
+        if (! /[^\s\}\]\)]/.test(lineResult)) {
+          // only closing brackets on this line, outdent now
+          currIndent = nextIndent
+        }
       }
     }
 
