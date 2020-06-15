@@ -200,47 +200,8 @@ last line can have trailing spaces  `
 
     for expression iterpolation, and there shall be more in the future.
 
-    The formatter will format
-
-    ```edh
-    some'proc(**kwargs)
-    ```
-
-    to
-
-    ```edh
-    some'proc(** kwargs )
-    ```
-
-    as it thinks there is a `(** )` bracket pair instead of `()`, this is less
-    ideal, though the interpreter will still work as expected so far, before
-    some extended bracket e.g.
-
-    ```edh
-    (* ... *)
-    ```
-
-    get introduced by the language syntax.
-
-    You can write
-
-    ```edh
-    some'proc( **kwargs)
-    ```
-
-    so the formatter can understand it
-    mentally correct and format the code to
-
-    ```edh
-    some'proc( **kwargs )
-    ```
-
-    . And the
-    formatter will accept spaces between `**` and `kwargs` too, i.e.
-
-    ```edh
-    some'proc( ** kwargs )
-    ```
+    The formatter will always remove any space between the brackets and
+    immediate operator chars inside.
 
     </details>
 
