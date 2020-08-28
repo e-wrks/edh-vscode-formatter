@@ -80,8 +80,19 @@ export function formatEdhLines(
       } else {
         // decrease 1 level (2 spaces) of indent
         nextIndent = nextIndent.substring(2)
-        if (! /[^\s\}\]\)]/.test(lineResult)) {
-          // only closing brackets on this line, outdent now
+        // check any valid code on current line
+        const codeOnLine = (() => {
+          const nonCodeChars = "}])" + opChars
+          for (const c of lineResult.trim()) {
+            if (nonCodeChars.indexOf(c) < 0) {
+              return true
+            }
+          }
+          return false
+        })()
+        if (!codeOnLine) {
+          // only (possibly augmented) closing brackets on this line,
+          // outdent since this line
           currIndent = nextIndent
         }
       }
