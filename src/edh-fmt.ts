@@ -82,7 +82,7 @@ export function formatEdhLines(
         nextIndent = nextIndent.substring(2)
         // check any valid code on current line
         const codeOnLine = (() => {
-          const nonCodeChars = "}])" + opChars
+          const nonCodeChars = " \t}])" + opChars
           for (const c of lineResult.trim()) {
             if (nonCodeChars.indexOf(c) < 0) {
               return true
