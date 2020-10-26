@@ -102,16 +102,18 @@ export function formatEdhLines(
 
       if (EdhSrcScope.Comment === currCtx.scope) {
         const cmtCloseIdx = restSrc.indexOf('#}')
-        if (cmtCloseIdx < 0) {
+        if (cmtCloseIdx < 0) { // still in comment block
           const cmtLine = restSrc.trim()
           if (cmtLine.startsWith('#')) {
-            appendLineResult(' ' + cmtLine)
+            // make it aligned with the initial `{#`
+            lineResult = ' ' + cmtLine
           } else {
-            appendLineResult(cmtLine)
+            // keep however this line is indented
+            currIndent = ''
+            lineResult = line
           }
           restSrc = '' // done with this line
-        }
-        else { // block comment finished in this line
+        } else { // block comment finished in this line
           const cmtContent = restSrc.substring(0, cmtCloseIdx + 2).trimLeft()
           appendLineResult(' ' + cmtContent)
           restSrc = restSrc.substring(cmtCloseIdx + 2).trimLeft()
