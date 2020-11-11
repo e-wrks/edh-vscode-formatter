@@ -227,7 +227,7 @@ last line can have trailing spaces  `
 
 - Outside a string literal:
 
-  **1**
+  **0 ~ 1**
 
 ## Styles Up to You
 
@@ -388,8 +388,6 @@ s=s++ '.edh'
 ```
 
 While excessive white spaces will be thrown away by the formatter.
-
-> Note **1** space before a string literal is always maintained as shown above.
 
 </details>
 

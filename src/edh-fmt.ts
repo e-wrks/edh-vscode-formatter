@@ -25,45 +25,64 @@ export function formatEdhLines(
     let line = document.lineAt(lineIdx).text
 
     let lineResult = ''
+    let lexemeOnline = false
 
-    function appendLineResult(moreResult: string): void {
-      if (lineResult.length > 0) { // after some content, insert a space
-        lineResult += ' ' + moreResult
-      } else { // the very first content on this line
-        lineResult = moreResult
+    function appendLexeme(lexemeHead: string): void {
+      if (lexemeOnline) { // after some lexeme, insert a space
+        lineResult += ' '
       }
+      lineResult += lexemeHead
+      lexemeOnline = true
     }
 
-    if (EdhSrcScope.String === currCtx.scope) {
-      const [strRest, afterStr] = finishStrLit(line, currCtx.delimiter)
-      if (null === afterStr) { // string not finished in this line
-        if (lineIdx >= sinceLine) {
-          fmtResult += line.trimRight() + '\n'
+    const [lineIndent, lineSrc] = (() => {
+      if (EdhSrcScope.String === currCtx.scope) {
+        const [strRest, afterStr] = finishStrLit(line, currCtx.delimiter)
+        if (null === afterStr) { // string not finished in this line
+          if (lineIdx >= sinceLine) {
+            fmtResult += line.trimRight() + '\n'
+          }
+          return [null, null];
         }
-        continue
+        // string finished in this line
+        currIndent = ''
+        lineResult = strRest
+
+        // as if no lexeme ever on this line, so as to disable space
+        // insertion in case no original space following the end of this
+        lexemeOnline = false // string
+
+        // trnasfer to code
+        currCtx = { scope: EdhSrcScope.Code }
+        return ['', afterStr]
+      } else {
+        const [, lineIndent, lineSrc,] = <string[]> // it's guaranteed to match
+          /^(\s*)(.*)$/[Symbol.match](line)
+        return [lineIndent, lineSrc];
       }
-      // string finished in this line
-      currIndent = ''
-      lineResult = strRest
-      line = afterStr.trimLeft()
-      // trnasfer to code
-      currCtx = { scope: EdhSrcScope.Code }
+    })();
+    if (null === lineIndent) {
+      continue; // line already consumed
     }
 
-    const [, lineIndent, lineSrc,] = <string[]> // it's guaranteed to match
-      /^(\s*)(.*)$/[Symbol.match](line)
-
-    if (!lineSrc && !lineResult) { // a blank line
-      if (lineIdx < sinceLine) { // not to be changed
-        blankLineCnt++
-        continue
+    if (!lineSrc) {
+      if (lineResult) { // a fully consumed, non-blank line
+        if (lineIdx >= sinceLine) {
+          fmtResult += currIndent + lineResult.trimRight() + '\n'
+        }
+      } else { // a blank line
+        if (lineIdx < sinceLine) { // not to be changed
+          blankLineCnt++
+        } else {
+          if (blankLineCnt < 2) { // not too many of blank lines
+            fmtResult += '\n' // one more blank line
+            blankLineCnt++
+          }
+        }
       }
-      if (blankLineCnt < 2) { // not too many of blank lines
-        fmtResult += '\n' // one more blank line
-      }
-      blankLineCnt++
       continue
     }
+
     // not a blank line
     blankLineCnt = 0
     if (lineIdx < sinceLine) { // accept what can't be changed
@@ -98,7 +117,9 @@ export function formatEdhLines(
       }
     }
 
-    for (let restSrc = lineSrc; restSrc;) {
+    let restSrc = lineSrc.trimLeft()
+    let spcLeading = restSrc.length < lineSrc.length
+    while (restSrc) {
 
       if (EdhSrcScope.Comment === currCtx.scope) {
         const cmtCloseIdx = restSrc.indexOf('#}')
@@ -115,8 +136,9 @@ export function formatEdhLines(
           restSrc = '' // done with this line
         } else { // block comment finished in this line
           const cmtContent = restSrc.substring(0, cmtCloseIdx + 2).trimLeft()
-          appendLineResult(' ' + cmtContent)
+          appendLexeme(' ' + cmtContent)
           restSrc = restSrc.substring(cmtCloseIdx + 2).trimLeft()
+          spcLeading = true // as if there is space following end of block cmt
           // trnasfer to code
           currCtx = { scope: EdhSrcScope.Code }
         }
@@ -127,17 +149,18 @@ export function formatEdhLines(
         /^({#|#)?(.*)$/[Symbol.match](restSrc)
       switch (cmtTag) {
         case '#': // line comment
-          appendLineResult(restSrc.trimRight())
+          appendLexeme(restSrc.trimRight())
           restSrc = '' // done with this line
           break
         case '{#': // start of block comment
           const [, cmtContent, cmtClose, afterCmt] = <string[]>
             /^(.*)(#})?(.*)$/[Symbol.match](cmtRest)
           if ('#}' === cmtClose) { // block comment finished in this line
-            appendLineResult('{#' + cmtContent + '#}')
+            appendLexeme('{#' + cmtContent + '#}')
             restSrc = afterCmt.trimLeft()
+            spcLeading = true // as if there is space following end of block cmt
           } else { // block comment not finished in this line
-            appendLineResult(restSrc.trimRight())
+            appendLexeme(restSrc.trimRight())
             restSrc = '' // done with this line
             // transfer to block comment
             currCtx = { scope: EdhSrcScope.Comment, block: true }
@@ -149,10 +172,21 @@ export function formatEdhLines(
           if (strDelim) { // start of string literal
             const [strRest, afterStr] = finishStrLit(strMore, strDelim)
             if (null !== afterStr) { // string finished in this line 
-              appendLineResult(strDelim + strRest)
-              restSrc = afterStr.trimLeft()
+              // insert space before the string, iif it originally
+              if (spcLeading) { lineResult += ' ' } // has leading space
+              lineResult += strDelim + strRest
+              // as if no lexeme ever on this line, so as to disable space
+              // insertion in case no original space following the end of this
+              lexemeOnline = false // string
+
+              const moreAfter = afterStr.trimLeft()
+              restSrc = moreAfter
+              spcLeading = moreAfter.length < afterStr.length
             } else { // string not finished in this line
-              appendLineResult(restSrc.trimRight())
+              // insert space before the string, iif it originally
+              if (spcLeading) { lineResult += ' ' } // has leading space
+              lineResult += restSrc.trimRight()
+
               restSrc = '' // done with this line
               // transfer to multi-line string
               currCtx = { scope: EdhSrcScope.String, delimiter: strDelim }
@@ -203,6 +237,7 @@ export function formatEdhLines(
                 // insert a following space
                 case ',':
                 case ';':
+                  lexemeOnline = true
                   lineResult = lineResult.trimRight() + c
                   cutOffIdx = i + 1
                   break
@@ -211,6 +246,7 @@ export function formatEdhLines(
                 case '(':
                   bracketStack.push(c)
                   nextIndent += '  ' // increase 1 level (2 spaces) of indent
+                  lexemeOnline = true
                   lineResult += c
                   for (i++; i < cutOffIdx; i++) {
                     const c1 = seq[i]
@@ -229,6 +265,7 @@ export function formatEdhLines(
                       lineResult += ' '
                     }
                   }
+                  lexemeOnline = true
                   lineResult += c
                   cutOffIdx = i + 1 // start of new expr/stmt, break the
                   // sequence, so as to insert a following space
@@ -242,6 +279,7 @@ export function formatEdhLines(
                       lineResult += ' '
                     }
                   }
+                  lexemeOnline = true
                   lineResult += c
                   cutOffIdx = i + 1 // start of new expr/stmt, break the
                   // sequence, so as to insert a following space
@@ -255,19 +293,21 @@ export function formatEdhLines(
                       lineResult += ' '
                     }
                   }
+                  lexemeOnline = true
                   lineResult += c
                   cutOffIdx = i + 1 // start of new expr/stmt, break the
                   // sequence, so as to insert a following space
                   break
                 default:
+                  lexemeOnline = true
                   lineResult += c
               }
             }
-            if (cutOffIdx < seq.length) {
-              restSrc = seq.substr(cutOffIdx) + moreSrc
-            } else {
-              restSrc = moreSrc.trimLeft()
-            }
+            const moreAfter = cutOffIdx < seq.length
+              ? seq.substr(cutOffIdx) + moreSrc
+              : moreSrc;
+            restSrc = moreAfter.trimLeft()
+            spcLeading = restSrc.length < moreAfter.length
           }
       }
 
