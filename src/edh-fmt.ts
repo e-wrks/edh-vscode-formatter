@@ -196,8 +196,14 @@ export function formatEdhLines(
             const [, seq, moreSrc,] = <string[]>
               /^(\S+)(.*)$/[Symbol.match](restSrc)
             if (spcLeading && lineResult.length > 0) {
-              lineResult += ' ' // collapse leading spaces into a single space
+              // collapse leading spaces into a single space
+              lineResult += ' '
+            } else if (lexemeOnline) { // no original space, but having some
+              // lexeme already on this line, insert a single space before the
+              // lexeme just appeared
+              lineResult += ' '
             }
+            lexemeOnline = true
             let cutOffIdx = seq.length
             let inIdent = false
             for (let i = 0; i < cutOffIdx; i++) {
@@ -227,7 +233,6 @@ export function formatEdhLines(
                 // insert a following space
                 case ',':
                 case ';':
-                  lexemeOnline = true
                   lineResult = lineResult.trimRight() + c
                   cutOffIdx = i + 1
                   break
@@ -236,7 +241,6 @@ export function formatEdhLines(
                 case '(':
                   bracketStack.push(c)
                   nextIndent += '  ' // increase 1 level (2 spaces) of indent
-                  lexemeOnline = true
                   lineResult += c
                   for (i++; i < cutOffIdx; i++) {
                     const c1 = seq[i]
@@ -255,7 +259,6 @@ export function formatEdhLines(
                       lineResult += ' '
                     }
                   }
-                  lexemeOnline = true
                   lineResult += c
                   cutOffIdx = i + 1 // start of new expr/stmt, break the
                   // sequence, so as to insert a following space
@@ -269,7 +272,6 @@ export function formatEdhLines(
                       lineResult += ' '
                     }
                   }
-                  lexemeOnline = true
                   lineResult += c
                   cutOffIdx = i + 1 // start of new expr/stmt, break the
                   // sequence, so as to insert a following space
@@ -283,13 +285,11 @@ export function formatEdhLines(
                       lineResult += ' '
                     }
                   }
-                  lexemeOnline = true
                   lineResult += c
                   cutOffIdx = i + 1 // start of new expr/stmt, break the
                   // sequence, so as to insert a following space
                   break
                 default:
-                  lexemeOnline = true
                   lineResult += c
               }
             }
