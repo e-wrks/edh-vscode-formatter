@@ -195,18 +195,8 @@ export function formatEdhLines(
             // extract next contiguous non-space sequence
             const [, seq, moreSrc,] = <string[]>
               /^(\S+)(.*)$/[Symbol.match](restSrc)
-            if (lineResult.length > 0) {
-              // not a blank line
-              if ('{[('.indexOf(lineResult[lineResult.length - 1]) < 0) {
-                // not opening a bracket
-                lineResult += ' ' // insert a single space
-              } else {
-                // opening a bracket
-                if (opChars.indexOf(seq[0]) < 0) {
-                  // not an operator char at first in a bracket
-                  lineResult += ' ' // insert a single space
-                }
-              }
+            if (spcLeading && lineResult.length > 0) {
+              lineResult += ' ' // collapse leading spaces into a single space
             }
             let cutOffIdx = seq.length
             let inIdent = false
