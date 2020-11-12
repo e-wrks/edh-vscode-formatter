@@ -173,7 +173,15 @@ export function formatEdhLines(
             const [strRest, afterStr] = finishStrLit(strMore, strDelim)
             if (null !== afterStr) { // string finished in this line 
               // insert space before the string, iif it originally
-              if (spcLeading) { lineResult += ' ' } // has leading space
+              if (spcLeading) {  // has original leading space
+                lineResult += ' '
+              } else if (lineResult.length > 0) {
+                if (',;{[()]}'.indexOf(lineResult[lineResult.length - 1]) >= 0) {
+                  // no original space, but following comma, semicolon, bracket
+                  // insert a single space
+                  lineResult += ' '
+                }
+              }
               lineResult += strDelim + strRest
               // as if no lexeme ever on this line, so as to disable space
               // insertion in case no original space following the end of this
@@ -247,8 +255,7 @@ export function formatEdhLines(
                     if (opChars.indexOf(c1) < 0) { break }
                     lineResult += c1
                   }
-                  cutOffIdx = i // start of new expr/stmt, break the
-                  // sequence, so as to insert a following space
+                  cutOffIdx = i // start new expr/stmt
                   break
                 case '}':
                   popBracket('{')
