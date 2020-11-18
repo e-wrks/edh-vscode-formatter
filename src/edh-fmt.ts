@@ -2,11 +2,59 @@
 import { TextDocument, Range, TextEdit, ProviderResult } from 'vscode'
 
 
-// TODO support more Unicode ranges as valid identifier chars
-const identStartChars = /[_a-zA-Z]/
-const identChars = /[_a-zA-Z0-9']/
+/**
+ * align with Haskell interpreter
 
-const opChars = "=~!@#$%^&|:<>?+-*/";
+isIdentStart :: Char -> Bool
+isIdentStart !c = c == '_' || Char.isAlpha c
+
+isIdentChar :: Char -> Bool
+isIdentChar c = c == '_' || c == '\'' || Char.isAlphaNum c
+
+ */
+const identStartChars = /(_|\p{L})/u
+const identChars = /([_']|\p{L}|\p{N})/u
+
+
+/**
+ * align with Haskell interpreter
+
+isOperatorChar :: Char -> Bool
+isOperatorChar c = if c < toEnum 128
+  then elem c ("=~!@#$%^&|:<>?*+-/" :: [Char])
+  else case Char.generalCategory c of
+    Char.MathSymbol           -> True
+    Char.CurrencySymbol       -> True
+    Char.ModifierSymbol       -> True
+    Char.OtherSymbol          -> True
+
+    Char.ConnectorPunctuation -> True
+    Char.DashPunctuation      -> True
+    Char.OtherPunctuation     -> True
+
+    _                         -> False
+ */
+const opChars = /([=~!@#$%^&|:<>?*+-/]|\p{Sm}|\p{Sc}|\p{Sk}|\p{So}|\p{Pc}|\p{Pd}|\p{Po})/u
+
+/**
+ * align with Haskell interpreter
+
+  isMagicChar :: Char -> Bool
+  isMagicChar c = elem c (".[]" :: [Char]) || isOperatorChar c
+
+ */
+const magicChars = /([.\[\]]|[=~!@#$%^&|:<>?*+-/]|\p{Sm}|\p{Sc}|\p{Sk}|\p{So}|\p{Pc}|\p{Pd}|\p{Po})/u
+
+/**
+ * 
+ * @param line 
+ */
+function containsCode(line: string): boolean {
+  const withNonCodeRemoved = line
+    .replace(/\s|[)\]}]/g, '')
+    .replace(new RegExp(opChars, 'g'), '')
+  return !!withNonCodeRemoved
+}
 
 
 export function formatEdhLines(
@@ -100,16 +148,7 @@ export function formatEdhLines(
         // decrease 1 level (2 spaces) of indent
         nextIndent = nextIndent.substring(2)
         // check any valid code on current line
-        const codeOnLine = (() => {
-          const nonCodeChars = " \t}])" + opChars
-          for (const c of lineResult.trim()) {
-            if (nonCodeChars.indexOf(c) < 0) {
-              return true
-            }
-          }
-          return false
-        })()
-        if (!codeOnLine) {
+        if (!containsCode(lineResult)) {
           // only (possibly augmented) closing brackets on this line,
           // outdent since this line
           currIndent = nextIndent
@@ -246,13 +285,23 @@ export function formatEdhLines(
                   break
                 case '{':
                 case '[':
+                  bracketStack.push(c)
+                  nextIndent += '  ' // increase 1 level (2 spaces) of indent
+                  lineResult += c
+                  for (i++; i < cutOffIdx; i++) {
+                    const c1 = seq[i]
+                    if (!opChars.test(c1)) { break }
+                    lineResult += c1
+                  }
+                  cutOffIdx = i // start new expr/stmt
+                  break
                 case '(':
                   bracketStack.push(c)
                   nextIndent += '  ' // increase 1 level (2 spaces) of indent
                   lineResult += c
                   for (i++; i < cutOffIdx; i++) {
                     const c1 = seq[i]
-                    if (opChars.indexOf(c1) < 0) { break }
+                    if (!magicChars.test(c1)) { break }
                     lineResult += c1
                   }
                   cutOffIdx = i // start new expr/stmt
@@ -262,7 +311,7 @@ export function formatEdhLines(
                   lineResult = lineResult.trimRight()
                   if (lineResult.length > 0) {
                     const c1 = lineResult[lineResult.length - 1]
-                    if ('{' !== c1 && opChars.indexOf(c1) < 0) {
+                    if ('{' !== c1 && !opChars.test(c1)) {
                       lineResult += ' '
                     }
                   }
@@ -275,7 +324,7 @@ export function formatEdhLines(
                   lineResult = lineResult.trimRight()
                   if (lineResult.length > 0) {
                     const c1 = lineResult[lineResult.length - 1]
-                    if ('[' !== c1 && opChars.indexOf(c1) < 0) {
+                    if ('[' !== c1 && !opChars.test(c1)) {
                       lineResult += ' '
                     }
                   }
@@ -288,7 +337,7 @@ export function formatEdhLines(
                   lineResult = lineResult.trimRight()
                   if (lineResult.length > 0) {
                     const c1 = lineResult[lineResult.length - 1]
-                    if ('(' !== c1 && opChars.indexOf(c1) < 0) {
+                    if ('(' !== c1 && !magicChars.test(c1)) {
                       lineResult += ' '
                     }
                   }
