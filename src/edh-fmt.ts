@@ -34,7 +34,13 @@ isOperatorChar c = if c < toEnum 128
 
     _                         -> False
  */
-const opChars = /([=~!@#$%^&|:<>?*+-/]|\p{Sm}|\p{Sc}|\p{Sk}|\p{So}|\p{Pc}|\p{Pd}|\p{Po})/u
+function isOperatorChar(c: string): boolean {
+  if (c <= '\xff') {
+    return "=~!@#$%^&|:<>?*+-/".indexOf(c) >= 0
+  } else {
+    return /(\p{Sm}|\p{Sc}|\p{Sk}|\p{So}|\p{Pc}|\p{Pd}|\p{Po})/u.test(c)
+  }
+}
 
 /**
  * align with Haskell interpreter
@@ -43,16 +49,21 @@ const opChars = /([=~!@#$%^&|:<>?*+-/]|\p{Sm}|\p{Sc}|\p{Sk}|\p{So}|\p{Pc}|\p{Pd}
   isMagicChar c = elem c (".[]" :: [Char]) || isOperatorChar c
 
  */
-const magicChars = /([.\[\]]|[=~!@#$%^&|:<>?*+-/]|\p{Sm}|\p{Sc}|\p{Sk}|\p{So}|\p{Pc}|\p{Pd}|\p{Po})/u
+function isMagicChar(c: string): boolean {
+  if (".[]".indexOf(c) >= 0) {
+    return true
+  } else {
+    return isOperatorChar(c)
+  }
+}
 
-/**
- * 
- * @param line 
- */
+
 function containsCode(line: string): boolean {
+  if (line.indexOf('_') >= 0) { return true } // it matches /\p{Pc}/u
+  const opChars = /([=~!@#$%^&|:<>?*+-/]|\p{Sm}|\p{Sc}|\p{Sk}|\p{So}|\p{Pc}|\p{Pd}|\p{Po})/gu
   const withNonCodeRemoved = line
     .replace(/\s|[)\]}]/g, '')
-    .replace(new RegExp(opChars, 'g'), '')
+    .replace(opChars, '')
   return !!withNonCodeRemoved
 }
 
@@ -290,7 +301,7 @@ export function formatEdhLines(
                   lineResult += c
                   for (i++; i < cutOffIdx; i++) {
                     const c1 = seq[i]
-                    if (!opChars.test(c1)) { break }
+                    if (!isOperatorChar(c1)) { break }
                     lineResult += c1
                   }
                   cutOffIdx = i // start new expr/stmt
@@ -301,7 +312,7 @@ export function formatEdhLines(
                   lineResult += c
                   for (i++; i < cutOffIdx; i++) {
                     const c1 = seq[i]
-                    if (!magicChars.test(c1)) { break }
+                    if (!isMagicChar(c1)) { break }
                     lineResult += c1
                   }
                   cutOffIdx = i // start new expr/stmt
@@ -311,7 +322,7 @@ export function formatEdhLines(
                   lineResult = lineResult.trimRight()
                   if (lineResult.length > 0) {
                     const c1 = lineResult[lineResult.length - 1]
-                    if ('{' !== c1 && !opChars.test(c1)) {
+                    if ('{' !== c1 && !isOperatorChar(c1)) {
                       lineResult += ' '
                     }
                   }
@@ -324,7 +335,7 @@ export function formatEdhLines(
                   lineResult = lineResult.trimRight()
                   if (lineResult.length > 0) {
                     const c1 = lineResult[lineResult.length - 1]
-                    if ('[' !== c1 && !opChars.test(c1)) {
+                    if ('[' !== c1 && !isOperatorChar(c1)) {
                       lineResult += ' '
                     }
                   }
@@ -337,7 +348,7 @@ export function formatEdhLines(
                   lineResult = lineResult.trimRight()
                   if (lineResult.length > 0) {
                     const c1 = lineResult[lineResult.length - 1]
-                    if ('(' !== c1 && !magicChars.test(c1)) {
+                    if ('(' !== c1 && !isMagicChar(c1)) {
                       lineResult += ' '
                     }
                   }
