@@ -59,8 +59,11 @@ function isMagicChar(c: string): boolean {
 
 
 function containsCode(line: string): boolean {
-  if (line.indexOf('_') >= 0) { return true } // it matches /\p{Pc}/u
+  // these would matche some general category in opChars
+  if (/[_'"`]/g.test(line)) { return true }
+  // TODO exact isOperatorChar() equivalent impl.?
   const opChars = /([=~!@#$%^&|:<>?*+-/]|\p{Sm}|\p{Sc}|\p{Sk}|\p{So}|\p{Pc}|\p{Pd}|\p{Po})/gu
+  // see what's left after non-code chars removed
   const withNonCodeRemoved = line
     .replace(/\s|[)\]}]/g, '')
     .replace(opChars, '')
