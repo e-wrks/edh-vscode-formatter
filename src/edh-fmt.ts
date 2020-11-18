@@ -28,7 +28,6 @@ isOperatorChar c = if c < toEnum 128
     Char.ModifierSymbol       -> True
     Char.OtherSymbol          -> True
 
-    Char.ConnectorPunctuation -> True
     Char.DashPunctuation      -> True
     Char.OtherPunctuation     -> True
 
@@ -38,7 +37,7 @@ function isOperatorChar(c: string): boolean {
   if (c <= '\xff') {
     return "=~!@#$%^&|:<>?*+-/".indexOf(c) >= 0
   } else {
-    return /(\p{Sm}|\p{Sc}|\p{Sk}|\p{So}|\p{Pc}|\p{Pd}|\p{Po})/u.test(c)
+    return /(\p{Sm}|\p{Sc}|\p{Sk}|\p{So}|\p{Pd}|\p{Po})/u.test(c)
   }
 }
 
@@ -62,7 +61,7 @@ function containsCode(line: string): boolean {
   // these would matche some general category in opChars
   if (/[_'"`]/g.test(line)) { return true }
   // TODO exact isOperatorChar() equivalent impl.?
-  const opChars = /([=~!@#$%^&|:<>?*+-/]|\p{Sm}|\p{Sc}|\p{Sk}|\p{So}|\p{Pc}|\p{Pd}|\p{Po})/gu
+  const opChars = /([=~!@#$%^&|:<>?*+-/]|\p{Sm}|\p{Sc}|\p{Sk}|\p{So}|\p{Pd}|\p{Po})/gu
   // see what's left after non-code chars removed
   const withNonCodeRemoved = line
     .replace(/\s|[)\]}]/g, '')
