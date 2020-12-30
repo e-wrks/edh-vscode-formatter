@@ -205,9 +205,9 @@ export function formatEdhLines(
           restSrc = '' // done with this line
           break
         case '{#': // start of block comment
-          const [, cmtContent, cmtClose, afterCmt] = <string[]>
-            /^(.*)(#})?(.*)$/[Symbol.match](cmtRest)
-          if ('#}' === cmtClose) { // block comment finished in this line
+          const singleLine = /^(.*)(#})(.*)$/[Symbol.match](cmtRest)
+          if (singleLine) { // block comment finished in this line
+            const [, cmtContent, _, afterCmt] = <string[]>singleLine
             appendLexeme('{#' + cmtContent + '#}')
             restSrc = afterCmt.trimLeft()
             spcLeading = true // as if there is space following end of block cmt
