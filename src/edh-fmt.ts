@@ -109,9 +109,8 @@ export function formatEdhLines(
         currIndent = ''
         lineResult = strRest
 
-        // as if no lexeme ever on this line, so as to disable space
-        // insertion in case no original space following the end of this
-        lexemeOnline = false // string
+        // partial string in this line is considered a lexeme
+        lexemeOnline = true
 
         // trnasfer to code
         currCtx = { scope: EdhSrcScope.Code }
@@ -188,9 +187,11 @@ export function formatEdhLines(
           restSrc = '' // done with this line
         } else { // block comment finished in this line
           const cmtContent = restSrc.substring(0, cmtCloseIdx + 2).trimLeft()
-          appendLexeme(' ' + cmtContent)
-          restSrc = restSrc.substring(cmtCloseIdx + 2).trimLeft()
-          spcLeading = true // as if there is space following end of block cmt
+          lineResult += ' ' + cmtContent
+          lexemeOnline = true
+          const afterCmt = restSrc.substring(cmtCloseIdx + 2)
+          restSrc = afterCmt.trimLeft()
+          spcLeading = restSrc.length < afterCmt.length
           // trnasfer to code
           currCtx = { scope: EdhSrcScope.Code }
         }
@@ -201,21 +202,25 @@ export function formatEdhLines(
         /^({#|#)?(.*)$/[Symbol.match](restSrc)
       switch (cmtTag) {
         case '#': // line comment
-          if (lineResult.length > 0 && spcLeading) {
-            lineResult += ' ' // honor original space but shrink to 1
+          if (lexemeOnline) {
+            lineResult += ' '
           }
-          appendLexeme(restSrc.trimRight())
+          lineResult += restSrc.trimRight()
           restSrc = '' // done with this line
           break
         case '{#': // start of block comment
           const singleLine = /^(.*)(#})(.*)$/[Symbol.match](cmtRest)
           if (singleLine) { // block comment finished in this line
             const [, cmtContent, _, afterCmt] = <string[]>singleLine
-            appendLexeme('{#' + cmtContent + '#}')
+            if (lexemeOnline) {
+              lineResult += ' '
+            }
+            lineResult += '{#' + cmtContent + '#}'
+            lexemeOnline = true
             restSrc = afterCmt.trimLeft()
-            spcLeading = true // as if there is space following end of block cmt
+            spcLeading = restSrc.length < afterCmt.length
           } else { // block comment not finished in this line
-            appendLexeme(restSrc.trimRight())
+            lineResult += restSrc.trimRight()
             restSrc = '' // done with this line
             // transfer to block comment
             currCtx = { scope: EdhSrcScope.Comment, block: true }
@@ -238,9 +243,9 @@ export function formatEdhLines(
                 }
               }
               lineResult += strDelim + strRest
-              // as if no lexeme ever on this line, so as to disable space
-              // insertion in case no original space following the end of this
-              lexemeOnline = false // string
+
+              // string in this line is considered a lexeme
+              lexemeOnline = true
 
               const moreAfter = afterStr.trimLeft()
               restSrc = moreAfter
@@ -300,6 +305,34 @@ export function formatEdhLines(
                   cutOffIdx = i + 1
                   break
                 case '{':
+                  if (i + 1 < cutOffIdx) {
+                    const nc = seq[i + 1]
+                    if (nc === '#') { // start of block comment
+                      const cmtRest = seq.substr(i + 2) + moreSrc
+                      const singleLine = /^(.*)(#})(.*)$/[Symbol.match](cmtRest)
+                      if (singleLine) { // block comment finished in this line
+                        const [, cmtContent, _, afterCmt] = <string[]>singleLine
+                        if (lexemeOnline) {
+                          lineResult += ' '
+                        }
+                        lineResult += '{#' + cmtContent + '#}'
+                        lexemeOnline = true
+                        // mark that more have been consumed
+                        cutOffIdx = seq.length + 1
+                        restSrc = afterCmt.trimLeft()
+                        spcLeading = restSrc.length < afterCmt.length
+                      } else { // block comment not finished in this line
+                        const cmtStart = seq.substr(i) + moreSrc
+                        lineResult += cmtStart.trimRight()
+                        // mark that more have been consumed
+                        cutOffIdx = seq.length + 1
+                        restSrc = '' // done with this whole line
+                        // transfer to block comment
+                        currCtx = { scope: EdhSrcScope.Comment, block: true }
+                      }
+                      break
+                    }
+                  }
                 case '[':
                   bracketStack.push(c)
                   nextIndent += '  ' // increase 1 level (2 spaces) of indent
@@ -365,11 +398,15 @@ export function formatEdhLines(
                   lineResult += c
               }
             }
-            const moreAfter = cutOffIdx < seq.length
-              ? seq.substr(cutOffIdx) + moreSrc
-              : moreSrc;
-            restSrc = moreAfter.trimLeft()
-            spcLeading = restSrc.length < moreAfter.length
+            if (cutOffIdx > seq.length) {
+              // restSrc and spcLeading should have been set properly
+            } else {
+              const moreAfter = cutOffIdx < seq.length
+                ? seq.substr(cutOffIdx) + moreSrc
+                : moreSrc;
+              restSrc = moreAfter.trimLeft()
+              spcLeading = restSrc.length < moreAfter.length
+            }
           }
       }
 
