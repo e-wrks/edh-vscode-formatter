@@ -201,6 +201,9 @@ export function formatEdhLines(
         /^({#|#)?(.*)$/[Symbol.match](restSrc)
       switch (cmtTag) {
         case '#': // line comment
+          if (lineResult.length > 0 && spcLeading) {
+            lineResult += ' ' // honor original space but shrink to 1
+          }
           appendLexeme(restSrc.trimRight())
           restSrc = '' // done with this line
           break
