@@ -5,7 +5,7 @@
 		"url": "https://github.com/e-wrks/edh-vscode-formatter"
 	},
 	"name": "edh-vscode-formatter",
-	"displayName": "Đ (Edh) Code Formatter",
+	"displayName": "Đ Code Formatter",
 	"description": "Code Formatter for Đ (Edh)",
 	"version": "1.7.0",
 	"engines": {
