@@ -167,7 +167,7 @@ last line can have trailing spaces  `
 
   **0 ~ 2**
 
-  > Even in comments and multi-line strings
+  > Even in block comments
 
 ### Margin Space
 
