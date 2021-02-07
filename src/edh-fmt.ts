@@ -263,12 +263,8 @@ export function formatEdhLines(
             // extract next contiguous non-space sequence
             const [, seq, moreSrc,] = <string[]>
               /^(\S+)(.*)$/[Symbol.match](restSrc)
-            if (spcLeading && lineResult.length > 0) {
+            if (lexemeOnline && spcLeading) {
               // collapse leading spaces into a single space
-              lineResult += ' '
-            } else if (lexemeOnline) { // no original space, but having some
-              // lexeme already on this line, insert a single space before the
-              // lexeme just appeared
               lineResult += ' '
             }
             lexemeOnline = true
