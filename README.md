@@ -188,22 +188,7 @@ last line can have trailing spaces  `
 
   - With Content:
 
-    **exactly 1 at each side** <details>
-    <summary>Note</summary>
-
-    **Edh** brackets are extensible by sticking operator chars to both or
-    either of the opening/closing tag, currently there is
-
-    ```edh
-    {$ ... $}
-    ```
-
-    for expression iterpolation, and there shall be more in the future.
-
-    The formatter will always remove any space between the brackets and
-    immediate operator chars inside.
-
-    </details>
+    **0 ~ 1** at each side
 
 - Outside a pair of brackets:
 

@@ -353,42 +353,18 @@ export function formatEdhLines(
                   break
                 case '}':
                   popBracket('{')
-                  lineResult = lineResult.trimRight()
-                  if (lineResult.length > 0) {
-                    const c1 = lineResult[lineResult.length - 1]
-                    if ('{' !== c1 && !isOperatorChar(c1)) {
-                      lineResult += ' '
-                    }
-                  }
                   lineResult += c
-                  cutOffIdx = i + 1 // start of new expr/stmt, break the
-                  // sequence, so as to insert a following space
+                  cutOffIdx = i + 1 // start as new expr/stmt
                   break
                 case ']':
                   popBracket('[')
-                  lineResult = lineResult.trimRight()
-                  if (lineResult.length > 0) {
-                    const c1 = lineResult[lineResult.length - 1]
-                    if ('[' !== c1 && !isOperatorChar(c1)) {
-                      lineResult += ' '
-                    }
-                  }
                   lineResult += c
-                  cutOffIdx = i + 1 // start of new expr/stmt, break the
-                  // sequence, so as to insert a following space
+                  cutOffIdx = i + 1 // start as new expr/stmt
                   break
                 case ')':
                   popBracket('(')
-                  lineResult = lineResult.trimRight()
-                  if (lineResult.length > 0) {
-                    const c1 = lineResult[lineResult.length - 1]
-                    if ('(' !== c1 && !isMagicChar(c1)) {
-                      lineResult += ' '
-                    }
-                  }
                   lineResult += c
-                  cutOffIdx = i + 1 // start of new expr/stmt, break the
-                  // sequence, so as to insert a following space
+                  cutOffIdx = i + 1 // start as new expr/stmt
                   break
                 default:
                   lineResult += c
