@@ -171,48 +171,13 @@ last line can have trailing spaces  `
 
 ### Margin Space
 
-- Between expressions/statements:
+- Between expressions/statements not separated by comma (`,`) or semicolon (`;`):
 
   **exactly 1**
 
-  > After the comma (`,`) / semicolon (`;`) if present
+- Between a closing bracket and following content:
 
-- Inside a pair of brackets (`{}`/`[]`/`()`):
-
-  > Note angle brackets `<>` do not exist in **Edh**, they appear as or in
-  > operators though.
-
-  - Without Content:
-
-    **0**
-
-  - With Content:
-
-    **0 ~ 1** at each side
-
-- Outside a pair of brackets:
-
-  - Left side:
-
-    **0 ~ 1**
-
-    > see [before an opening bracket](#before-an-opening-bracket)
-
-  - Right side as End-of-Line:
-
-    **0**
-
-    > as it is effectivelly [Trailing Space](#trailing-space)
-
-  - Right side followed by stuff:
-
-    **1**
-
-  > Same for both single line and multi-line cases
-
-- Outside a string literal:
-
-  **0 ~ 1**
+  **exactly 1**
 
 ## Styles Up to You
 
