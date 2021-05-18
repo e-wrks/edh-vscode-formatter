@@ -64,7 +64,7 @@ function containsCode(line: string): boolean {
   const opChars = /([=~!@#$%^&|:<>?*+-/]|\p{Sm}|\p{Sc}|\p{Sk}|\p{So}|\p{Pd}|\p{Po})/gu
   // see what's left after non-code chars removed
   const withNonCodeRemoved = line
-    .replace(/\s|[)\]}]/g, '')
+    .replace(/\s|[()\[\]{}]/g, '')
     .replace(opChars, '')
   return !!withNonCodeRemoved
 }
@@ -236,9 +236,9 @@ export function formatEdhLines(
               if (spcLeading) {  // has original leading space
                 lineResult += ' '
               } else if (lineResult.length > 0) {
-                if (',;{[()]}'.indexOf(lineResult[lineResult.length - 1]) >= 0) {
-                  // no original space, but following comma, semicolon, bracket
-                  // insert a single space
+                if (',;)]}'.indexOf(lineResult[lineResult.length - 1]) >= 0) {
+                  // no original space, but following comma, semicolon,
+                  // closing bracket. insert a single space
                   lineResult += ' '
                 }
               }
@@ -329,7 +329,6 @@ export function formatEdhLines(
                       break
                     }
                   }
-                case '[':
                   bracketStack.push(c)
                   nextIndent += '  ' // increase 1 level (2 spaces) of indent
                   lineResult += c
@@ -340,31 +339,32 @@ export function formatEdhLines(
                   }
                   cutOffIdx = i // start new expr/stmt
                   break
+                case '[':
+                  bracketStack.push(c)
+                  nextIndent += '  ' // increase 1 level (2 spaces) of indent
+                  lineResult += c
+                  cutOffIdx = i + 1 // start new expr/stmt
+                  break
                 case '(':
                   bracketStack.push(c)
                   nextIndent += '  ' // increase 1 level (2 spaces) of indent
                   lineResult += c
-                  for (i++; i < cutOffIdx; i++) {
-                    const c1 = seq[i]
-                    if (!isMagicChar(c1)) { break }
-                    lineResult += c1
-                  }
-                  cutOffIdx = i // start new expr/stmt
+                  cutOffIdx = i + 1 // start new expr/stmt
                   break
                 case '}':
                   popBracket('{')
                   lineResult += c
-                  cutOffIdx = i + 1 // start as new expr/stmt
+                  cutOffIdx = i + 1 // start new expr/stmt
                   break
                 case ']':
                   popBracket('[')
                   lineResult += c
-                  cutOffIdx = i + 1 // start as new expr/stmt
+                  cutOffIdx = i + 1 // start new expr/stmt
                   break
                 case ')':
                   popBracket('(')
                   lineResult += c
-                  cutOffIdx = i + 1 // start as new expr/stmt
+                  cutOffIdx = i + 1 // start new expr/stmt
                   break
                 default:
                   lineResult += c
@@ -434,4 +434,3 @@ function finishStrLit(strMore: string, strDelim: string): [string, string | null
     ]
   }
 }
-
