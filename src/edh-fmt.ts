@@ -163,7 +163,10 @@ export function formatEdhLines(
         if (!containsCode(lineResult)) {
           // only (possibly augmented) closing brackets on this line,
           // outdent since this line
-          currIndent = nextIndent
+          if (currIndent.length > nextIndent.length) {
+            // on bracket closing, do outdent only, don't indent
+            currIndent = nextIndent
+          }
         }
       }
     }
