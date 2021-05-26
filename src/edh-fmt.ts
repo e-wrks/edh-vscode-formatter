@@ -215,15 +215,11 @@ export function formatEdhLines(
           const singleLine = /^(.*)(#})(.*)$/[Symbol.match](cmtRest)
           if (singleLine) { // block comment finished in this line
             const [, cmtContent, _, afterCmt] = <string[]>singleLine
-            if (lexemeOnline) {
-              lineResult += ' '
-            }
-            lineResult += '{#' + cmtContent + '#}'
-            lexemeOnline = true
+            appendLexeme('{#' + cmtContent + '#}')
             restSrc = afterCmt.trimLeft()
             spcLeading = restSrc.length < afterCmt.length
           } else { // block comment not finished in this line
-            lineResult += restSrc.trimRight()
+            appendLexeme(restSrc.trimRight())
             restSrc = '' // done with this line
             // transfer to block comment
             currCtx = { scope: EdhSrcScope.Comment, block: true }
@@ -311,18 +307,14 @@ export function formatEdhLines(
                       const singleLine = /^(.*)(#})(.*)$/[Symbol.match](cmtRest)
                       if (singleLine) { // block comment finished in this line
                         const [, cmtContent, _, afterCmt] = <string[]>singleLine
-                        if (lexemeOnline) {
-                          lineResult += ' '
-                        }
-                        lineResult += '{#' + cmtContent + '#}'
-                        lexemeOnline = true
+                        appendLexeme('{#' + cmtContent + '#}')
                         // mark that more have been consumed
                         i = cutOffIdx = seq.length + 1
                         restSrc = afterCmt.trimLeft()
                         spcLeading = restSrc.length < afterCmt.length
                       } else { // block comment not finished in this line
                         const cmtStart = seq.substr(i) + moreSrc
-                        lineResult += cmtStart.trimRight()
+                        appendLexeme(cmtStart.trimRight())
                         // mark that more have been consumed
                         i = cutOffIdx = seq.length + 1
                         restSrc = '' // done with this whole line
