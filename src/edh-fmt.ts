@@ -317,14 +317,14 @@ export function formatEdhLines(
                         lineResult += '{#' + cmtContent + '#}'
                         lexemeOnline = true
                         // mark that more have been consumed
-                        cutOffIdx = seq.length + 1
+                        i = cutOffIdx = seq.length + 1
                         restSrc = afterCmt.trimLeft()
                         spcLeading = restSrc.length < afterCmt.length
                       } else { // block comment not finished in this line
                         const cmtStart = seq.substr(i) + moreSrc
                         lineResult += cmtStart.trimRight()
                         // mark that more have been consumed
-                        cutOffIdx = seq.length + 1
+                        i = cutOffIdx = seq.length + 1
                         restSrc = '' // done with this whole line
                         // transfer to block comment
                         currCtx = { scope: EdhSrcScope.Comment, block: true }
