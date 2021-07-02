@@ -57,16 +57,21 @@ function isMagicChar(c: string): boolean {
 }
 
 
-function containsCode(line: string): boolean {
-  // these would matche some general category in opChars
-  if (/[_'"`]/g.test(line)) { return true }
-  // TODO exact isOperatorChar() equivalent impl.?
-  const opChars = /([=~!@#$%^&|:<>?*+-/]|\p{Sm}|\p{Sc}|\p{Sk}|\p{So}|\p{Pd}|\p{Po})/gu
-  // see what's left after non-code chars removed
-  const withNonCodeRemoved = line
-    .replace(/\s|[()\[\]{}]/g, '')
-    .replace(opChars, '')
-  return !!withNonCodeRemoved
+
+function shouldDedentCurr(line: string): boolean {
+  for (const c of line) {
+    if ('}])'.indexOf(c) >= 0) {
+      // closing bracket (though possibly augmented) leading, should dedent
+      return true
+    }
+    if (isOperatorChar(c)) {
+      // possibly part of augmented closing bracket, check following to see
+      continue
+    }
+    // some code leading, should not dedent
+    return false
+  }
+  return true
 }
 
 
@@ -159,12 +164,12 @@ export function formatEdhLines(
       } else {
         // decrease 1 level (2 spaces) of indent
         nextIndent = nextIndent.substring(2)
-        // check any valid code on current line
-        if (!containsCode(lineResult)) {
-          // only (possibly augmented) closing brackets on this line,
-          // outdent since this line
+        // dedent since current line as necessary
+        if (shouldDedentCurr(lineResult)) {
+          // on bracket closing, should only dedent,
+          // if next line has even more indent scheduled,
+          // don't follow that
           if (currIndent.length > nextIndent.length) {
-            // on bracket closing, do outdent only, don't indent
             currIndent = nextIndent
           }
         }
