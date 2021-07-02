@@ -41,22 +41,6 @@ function isOperatorChar(c: string): boolean {
   }
 }
 
-/**
- * align with Haskell interpreter
-
-  isMagicChar :: Char -> Bool
-  isMagicChar c = elem c (".[]" :: [Char]) || isOperatorChar c
-
- */
-function isMagicChar(c: string): boolean {
-  if (".[]".indexOf(c) >= 0) {
-    return true
-  } else {
-    return isOperatorChar(c)
-  }
-}
-
-
 
 function shouldDedentCurr(line: string): boolean {
   for (const c of line) {
